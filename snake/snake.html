@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>全新贪吃蛇---等你来挑战</title>
+        <link type="text/css" href="snake.css" rel="stylesheet">
+        <link type="image/x-icon" href="favicon.ico" rel="icon">
+    </head>
+    <body>
+        <header>贪吃蛇</header>
+        <div class="show-snake-outer">
+            <aside class="left-pic">
+                <ul id="snake-list">
+                    <h3><span id="left-btn"></span><span id="snake-list-tt">普通妖兵</span><span id="right-btn"></span></h3>
+                    <li class="snake-list1"><img class="small-snake" src="img/snake-1-1.png"></li>
+                    <li class="snake-list2"><img class="small-snake" src="img/snake-1-2.png"></li>
+                    <li class="snake-list3"><img class="small-snake" src="img/snake-1-3.png"></li>
+                </ul>
+            </aside>
+
+            <div class="center-pic">
+                <div class="big-snake"><img id="snake" class="display-snake" src="img/snake-1-1.png"></div>
+                <a class="start-game" id="startGame" href="#">开始游戏</a>
+            </div>
+
+            <aside class="right-disc">
+                <ul class="right-content" id="snake-info">
+                    <h3>妖兵资料</h3>
+                    <li>等级：妖兵一级</li>
+                </ul>
+                <ul class="right-content">
+                    <li id="snakes-speed">速度：15 m/s</li>
+                </ul>
+            </aside>
+        </div>
+        <input type="hidden" id="deliver-url" value="">
+        <script type="text/javascript" src="snake.js"></script>
+    </body>
+</html>

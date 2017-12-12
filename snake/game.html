@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>全新贪吃蛇---等你来挑战</title>
+        <link type="text/css" href="snake.css" rel="stylesheet">
+        <link type="image/x-icon" href="favicon.ico" rel="icon">
+    </head>
+    <body>
+        <header class="game-tt">贪吃蛇</header>        
+        <div class="game-info">
+            <div class="game"><table id="game-interface" style="width:640px"></table>
+                <div id="tree" class="tree"></div>
+                <div id="tree2" class="tree2"></div>
+            </div>
+
+            <aside class="right-disc">
+                <ul class="right-content" id="snake-info">
+                    <h3>妖兵信息</h3>
+                    <li>等级：<span class="grade" id="snake-grade">妖兵一级</span></li>
+                    <li id="dif-speed">速度：15m/s</li>
+                    <li>成长：<span class="grade" id="food-num">0</span></li>
+                    <li><a class="rechoose" href="snake.html">重新选择</a></li>
+                    <li><a class="rechoose restart" id="re-load" href="#">重新开始</a></li>
+                </ul>
+                
+            </aside>
+        </div>
+        <div class="game-over" id="game-over">Game Over !</div>
+        <script type="text/javascript" src="game.js"></script>
+    </body>
+</html>
