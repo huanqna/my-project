@@ -173,6 +173,9 @@ function makeSnakeBody(snakeUrl) {                                              
     snakeBody[len - 2].style.backgroundSize = "80px";
     snakeBody[len - 1].style.background = "transparent";
     snakeBody[len - 1].style.MozTransform = "rotate(0deg)";
+    snakeBody[len - 1].style.MsTransform = "rotate(0deg)";
+    snakeBody[len - 1].style.OTransform = "rotate(0deg)";
+    snakeBody[len - 1].style.WebkitTransform = "rotate(0deg)";
 }
 
 window.addEventListener("keydown", function (event) {                             //触发移动
@@ -267,17 +270,29 @@ function changeDir(dir) {                                                //蛇�
     switch (dir) { 
         case "right":
             snakeBody[num].style.MozTransform = "rotate(0deg)";
+            snakeBody[num].style.MsTransform = "rotate(0deg)";
+            snakeBody[num].style.OTransform = "rotate(0deg)";
+            snakeBody[num].style.WebkitTransform = "rotate(0deg)";
             break;
         case "left":
             snakeBody[num].style.MozTransform = "rotate(180deg)";
+            snakeBody[num].style.MsTransform = "rotate(180deg)";
+            snakeBody[num].style.OTransform = "rotate(180deg)";
+            snakeBody[num].style.WebkitTransform = "rotate(180deg)";
             num++;
             break;
         case "up":
             snakeBody[num].style.MozTransform = "rotate(-90deg)";
+            snakeBody[num].style.MsTransform = "rotate(-90deg)";
+            snakeBody[num].style.OTransform = "rotate(-90deg)";
+            snakeBody[num].style.WebkitTransform = "rotate(-90deg)";
             num++;
             break;
         case "down":
             snakeBody[num].style.MozTransform = "rotate(90deg)";
+            snakeBody[num].style.MsTransform = "rotate(90deg)";
+            snakeBody[num].style.OTransform = "rotate(90deg)";
+            snakeBody[num].style.WebkitTransform = "rotate(90deg)";
             num++;
             break;
     }
