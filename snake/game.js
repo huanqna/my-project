@@ -57,6 +57,36 @@ window.onkeydown = function (event) {
     clearTimeout(move);
     snakeMove();
 };
+var startX = 0,      //触摸设备的触发方式
+    startY = 0,
+    endX = 0,
+    endY = 0;
+gameInterface.addEventListener("touchstart", function () {
+    startX = event.changedTouches[0].pageX;
+    startY = event.changedTouches[0].pageY;
+}, false)
+gameInterface.addEventListener("touchmove", function () {
+    event.preventDefault();
+    endX = event.changedTouches[0].pageX;
+    endY = event.changedTouches[0].pageY;
+    var diffX = startX - endX,
+        diffY = startY - endY;
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX > 0) {
+            direction = "left";
+        } else {
+            direction = "right";
+        }
+    } else if (Math.abs(diffX) < Math.abs(diffY)) {
+        if (diffY > 0) {
+            direction = "up";
+        } else {
+            direction = "down";
+        }
+    } else {
+        return;
+    }
+}, false)
 /***************************************** 蛇的原型 **********************************/
 function Snake(){
     this.snakeBody = [];
@@ -198,12 +228,14 @@ function snakeMove(){  //蛇前进时的各种动作
         window.onkeydown = null;
     }
 }
-document.body.onkeypress = function(){ //首次触发蛇的前进
+document.body.onkeypress = function(){ //首次触发蛇的前进（电脑）
     setTimeout(snakeMove, snake.speed);
     document.body.onkeypress = null;
 };
-
-
+gameInterface.ontouchstart = function () {//首次触发蛇的前进(手机)
+    setTimeout(snakeMove, snake.speed);
+    gameInterface.ontouchstart = null;
+};
 /**************************场景变化：包括晋级时名字的改变、阻碍物的生成 ********************/
 function changePlace(num) {
     var result = num / 6,
