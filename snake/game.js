@@ -232,7 +232,6 @@ function changePlace(num) {
     }
 }
 
-
 /********************随机出现不同阻碍物 ****************/
 function plantTrees(position1, position2, position3, position4, arg3, arg4, arg34){
     var num1 = Math.floor(Math.random() * 19 + 1),
