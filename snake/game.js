@@ -86,6 +86,8 @@ gameInterface.addEventListener("touchmove", function () {
     } else {
         return;
     }
+    clearTimeout(move);
+    snakeMove();
 }, false)
 /***************************************** 蛇的原型 **********************************/
 function Snake(){
