@@ -4,7 +4,8 @@ var reLoadBtn = document.getElementById("re-load"),
     difSpeed = document.getElementById("dif-speed").firstChild,
     snakeGrade = document.getElementById("snake-grade").firstChild,
     tree = document.getElementById("tree"),
-    tree2 = document.getElementById("tree2");
+    tree2 = document.getElementById("tree2"),
+    gameInterface = document.getElementById("game-interface");
 
 reLoadBtn.onclick = function () {
     location.reload();
@@ -18,7 +19,6 @@ tree2.style.display = "none";
 /**************** 画表格 ***************/
 var cell = [];
 function makeCell() {
-    var gameInterface = document.getElementById("game-interface");
     for (var i = 0; i < 22; i++) {
         var trCell = [];
         var tr = gameInterface.appendChild(document.createElement("tr"));
@@ -33,7 +33,7 @@ makeCell();
 /************** 确定蛇移动方向 **********/
 var direction = "right",
     preDirection = "right";
-window.onkeydown = function (event) {
+window.onkeydown = function (event) {   //电脑的触发方式
     preDirection = direction;
     var keyCode = event.keyCode ? event.keyCode : window.event.keyCode;
     switch (keyCode) {
@@ -263,6 +263,7 @@ function changePlace(num) {
         snakeGrade.data = "一方霸主";
     }
 }
+
 
 /********************随机出现不同阻碍物 ****************/
 function plantTrees(position1, position2, position3, position4, arg3, arg4, arg34){
