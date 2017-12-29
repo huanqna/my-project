@@ -4,7 +4,8 @@ var reLoadBtn = document.getElementById("re-load"),
     difSpeed = document.getElementById("dif-speed").firstChild,
     snakeGrade = document.getElementById("snake-grade").firstChild,
     tree = document.getElementById("tree"),
-    tree2 = document.getElementById("tree2");
+    tree2 = document.getElementById("tree2"),
+    gameInterface = document.getElementById("game-interface");
 
 reLoadBtn.onclick = function () {
     location.reload();
@@ -18,7 +19,6 @@ tree2.style.display = "none";
 /**************** 画表格 ***************/
 var cell = [];
 function makeCell() {
-    var gameInterface = document.getElementById("game-interface");
     for (var i = 0; i < 22; i++) {
         var trCell = [];
         var tr = gameInterface.appendChild(document.createElement("tr"));
@@ -33,7 +33,7 @@ makeCell();
 /************** 确定蛇移动方向 **********/
 var direction = "right",
     preDirection = "right";
-window.onkeydown = function (event) {
+window.onkeydown = function (event) {   //电脑的触发方式
     preDirection = direction;
     var keyCode = event.keyCode ? event.keyCode : window.event.keyCode;
     switch (keyCode) {
@@ -57,6 +57,38 @@ window.onkeydown = function (event) {
     clearTimeout(move);
     snakeMove();
 };
+var startX = 0,      //触摸设备的触发方式
+    startY = 0,
+    endX = 0,
+    endY = 0;
+gameInterface.addEventListener("touchstart", function () {
+    startX = event.changeTouches[0].clientX;
+    startY = event.changeTouches[0].clientY;
+}, false)
+gameInterface.addEventListener("touchmove", function () {
+    event.preventDefault();
+    endX = event.changeTouches[0].clientX;
+    endY = event.changeTouches[0].clientY;
+    var diffX = startX - endX,
+        diffY = startY - endY;
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX > 0) {
+            direction = "right";
+        } else {
+            direction = "left";
+        }
+    } else if (Math.abs(diffX) < Math.abs(diffY)) {
+        if (diffY > 0) {
+            direction = "down";
+        } else {
+            direction = "up";
+        }
+    }else{
+        return;
+    }
+    clearTimeout(move);
+    snakeMove();
+}, false)
 /***************************************** 蛇的原型 **********************************/
 function Snake(){
     this.snakeBody = [];
@@ -198,11 +230,15 @@ function snakeMove(){  //蛇前进时的各种动作
         window.onkeydown = null;
     }
 }
+
 document.body.onkeypress = function(){ //首次触发蛇的前进
     setTimeout(snakeMove, snake.speed);
     document.body.onkeypress = null;
 };
-
+gameInterface.ontouchstart = function () {
+    setTimeout(snakeMove, snake.speed);
+    gameInterface.ontouchstart = null;
+};
 
 /**************************场景变化：包括晋级时名字的改变、阻碍物的生成 ********************/
 function changePlace(num) {
@@ -231,6 +267,7 @@ function changePlace(num) {
         snakeGrade.data = "一方霸主";
     }
 }
+
 
 /********************随机出现不同阻碍物 ****************/
 function plantTrees(position1, position2, position3, position4, arg3, arg4, arg34){
