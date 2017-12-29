@@ -62,14 +62,14 @@ var startX = 0,      //触摸设备的触发方式
     endX = 0,
     endY = 0;
 gameInterface.addEventListener("touchstart", function () {
-    startX = event.changedTouches[0].pageX;
-    startY = event.changedTouches[0].pageY;
+    startX = event.changedTouches[0].clientX;
+    startY = event.changedTouches[0].clientY;
 }, false)
 gameInterface.addEventListener("touchmove", function () {
     preDirection = direction;
     event.preventDefault();
-    endX = event.changedTouches[0].pageX;
-    endY = event.changedTouches[0].pageY;
+    endX = event.changedTouches[0].clientX;
+    endY = event.changedTouches[0].clientY;
     var diffX = startX - endX,
         diffY = startY - endY;
     if (Math.abs(diffX) > Math.abs(diffY)) {
