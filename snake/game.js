@@ -1,19 +1,21 @@
-var reLoadBtn = document.getElementById("re-load");
-var gameOver = document.getElementById("game-over");
-var growUp = document.getElementById("food-num").firstChild;
-var difSpeed = document.getElementById("dif-speed").firstChild;
-var snakeGrade = document.getElementById("snake-grade").firstChild;
-var tree = document.getElementById("tree");
-tree.style.display = "none";
-var tree2 = document.getElementById("tree2");
-tree2.style.display = "none";
+var reLoadBtn = document.getElementById("re-load"),
+    gameOver = document.getElementById("game-over"),
+    growUp = document.getElementById("food-num").firstChild,
+    difSpeed = document.getElementById("dif-speed").firstChild,
+    snakeGrade = document.getElementById("snake-grade").firstChild,
+    tree = document.getElementById("tree"),
+    tree2 = document.getElementById("tree2");
 
-var speed = 100;
-reLoadBtn.onclick = function(){
+reLoadBtn.onclick = function () {
     location.reload();
 }
 gameOver.style.display = "none";
-/****************画表格 */
+
+/*******游戏晋级中的两棵树 *************/
+tree.style.display = "none";
+tree2.style.display = "none";
+
+/**************** 画表格 ***************/
 var cell = [];
 function makeCell() {
     var gameInterface = document.getElementById("game-interface");
@@ -28,356 +30,276 @@ function makeCell() {
     }
 }
 makeCell();
-/***********匹配七条小蛇********** */
-function chooseSnake(){
-    var whichSnake = location.search.slice(-17).toString();
-    var src = "img/snake-1-1.png";
-    switch (whichSnake){
-        case "img/snake-1-1.png":
-            src = "url(img/small-snake-11.png)";
-            difSpeed.data ="速度：15 m/s";
-            speed = 450;
-            break;
-        case "img/snake-1-2.png":
-            src = "url(img/small-snake-12.png)";
-            difSpeed.data = "速度：25 m/s";
-            speed = 400;
-            break;
-        case "img/snake-1-3.png":
-            src = "url(img/small-snake-13.png)";
-            difSpeed.data = "速度：35 m/s";
-            speed = 300;
-            break;
-        case "img/snake-2-1.png":
-            src = "url(img/small-snake-21.png)";
-            difSpeed.data = "速度：50 m/s";
-            speed = 250;
-            break;
-        case "img/snake-2-2.png":
-            src = "url(img/small-snake-22.png)";
-            difSpeed.data = "速度：60 m/s";
-            speed = 200;
-            break; 
-        case "img/snake-2-3.png":
-            src = "url(img/small-snake-23.png)";
-            difSpeed.data = "速度：70 m/s";
-            speed = 150;
-            break;
-        case "img/snake-3-1.png":
-            src = "url(img/small-snake-31.png)";
-            difSpeed.data = "速度：85 m/s";
-            speed = 100;
-            break;
-        case "img/snake-3-2.png":
-            src = "url(img/small-snake-32.png)";
-            difSpeed.data = "速度：95 m/s";
-            speed = 80;
-            break;
-        case "img/snake-3-3.png":
-            src = "url(img/small-snake-33.png)";
-            difSpeed.data = "速度：105 m/s";
-            speed = 50;
-            break;
-    }
-    return src;
-}
-
-/*****************************************蛇的原型 */
-var x = 4;
-var y = 0;
-var timer = null;
-var foodPosition;
-var preDirection;
-var food = 0;
-var stopGroup = [];
-
-
-
-var snakeBody = [];
-    snakeBody[0] = cell[0][4];
-    snakeBody[1] = cell[0][3];
-    snakeBody[2] = cell[0][2];
-    snakeBody[3] = cell[0][1];
-    snakeBody[4] = cell[0][0];
-makeSnakeBody(chooseSnake());
-makeFood();
-
-
-
-/********************************************大循环************************** */
-function move(){        
-    var direction = arguments[0];
-    var num = 0;
-
-        // 限制回退操作
-        if((preDirection=="left"&&direction=="right")||(preDirection=="right"&&direction=="left")){
-            return;
-        }else if((preDirection=="up"&&direction=="down")||(preDirection=="down"&&direction=="up")){
-            return;
-        }
-        clearInterval(timer);
-        preDirection = direction;
-
-
-    switch (direction) {                                       //蛇的移动
-        case "right":
-            x += 1;
-            break;
-        case "left":
-            x -= 1;
-            break;
-        case "up":
-            y -= 1;
-            break;
-        case "down":
-            y += 1;
-            break;
-    }
-
-
-    if (x < 0 || x > 31 || y < 0 || y > 21 || bitItself() || hitTouchStop()) {                        //死法
-        clearInterval(timer);
-        gameOver.style.display = "block";
-        reLoadBtn.focus();
-        move()=null;
-    } else if(snakeBody[0] == foodPosition) {                                 //撞到食物
-        snakeBody.length += 1;
-        growUp.data =food;
-        changePlace(food);
-        makeFood();
-    }
-
-    snakeBody.unshift(cell[y][x]);
-    snakeBody.pop();
-    makeSnakeBody(chooseSnake());
-    changeDir(direction);
-    if (snakeBody.length >= (food + 5)) {                                      //生成食物
-        makeFood();
-    }
-
-    timer = setInterval(function () { move(direction) }, speed);
-}
-
-/*********************************************************************大循环结束*************8 */
-function makeSnakeBody(snakeUrl) {                                                  //蛇的身体
-    var len = snakeBody.length;
-    snakeBody.forEach(function (item, index, array) {
-        item.style.background = snakeUrl + " no-repeat top left 33%";
-        item.style.backgroundSize = "80px";
-    })
-    snakeBody[0].style.background = snakeUrl + " no-repeat top left 99%";
-    snakeBody[0].style.backgroundSize = "80px";
-    snakeBody[1].style.background = snakeUrl + " no-repeat top left 66%";
-    snakeBody[1].style.backgroundSize = "80px";
-    snakeBody[len - 2].style.background = snakeUrl + " no-repeat top left";
-    snakeBody[len - 2].style.backgroundSize = "80px";
-    snakeBody[len - 1].style.background = "transparent";
-    snakeBody[len - 1].style.MozTransform = "rotate(0deg)";
-}
-
-window.addEventListener("keydown", function (event) {                             //触发移动
-    var keyCode = event.keyCode ? event.keyCode : window.event.keyCode
+/************** 确定蛇移动方向 **********/
+var direction = "right",
+    preDirection = "right";
+window.onkeydown = function (event) {
+    preDirection = direction;
+    var keyCode = event.keyCode ? event.keyCode : window.event.keyCode;
     switch (keyCode) {
         case 37:
         case 65:
-            move("left");
+            direction = "left";
             break;
         case 38:
         case 87:
-            move("up");
+            direction = "up";
             break;
         case 39:
         case 68:
-            move("right");
+            direction = "right";
             break;
         case 40:
         case 83:
-            move("down");
+            direction = "down";
             break;
     }
-});
-
-
-/**************************场景变化 */
-function changePlace(num){                                                      //不断升级（等级变化与场景变化）
-    var result = num/5;
-    switch (result) {
-        case 0:
-            snakeGrade.data = "妖兵一级";
-        case 1:
-            snakeGrade.data = "妖兵二级";
-            for (var i = 0; i < 1; i++) {
-                showStop(1);
-            };
-            break;
-        case 2:
-            snakeGrade.data = "妖兵三级";
-            for (var i = 0; i < 2; i++) {
-                showStop(2);
-            };
-            break;
-        case 3:
-            snakeGrade.data = "妖将一级";
-            for (var i = 0; i < 2; i++) {
-                showStop(3);
-            };
-            tree2.style.display = "block";
-            stopGroup.push(cell[12][8]);
-            break;
-        case 4:
-            snakeGrade.data = "妖将二级";
-            for (var i = 0; i < 1; i++) {
-                showStop(4);
-            };
-            break;
-        case 5:
-            snakeGrade.data = "妖将三级";
-            for (var i = 0; i < 2; i++) {
-                showStop(5);
-            };
-            break;
-        case 6:
-            snakeGrade.data = "妖王一级";
-            for (var i = 0; i < 2; i++) {
-                showStop(3);
-            };
-            break;
-        case 7:
-            snakeGrade.data = "妖王二级";
-            for (var i = 0; i < 2; i++) {
-                showStop(1);
-            };
-            break;
-        case 8:
-            snakeGrade.data = "妖王三级";
-            for (var i = 0; i < 2; i++) {
-                showStop(5);
-            };
-            break;
-        case 9:
-            snakeGrade.data = "一方霸主";
-            tree2.style.display = "block";
-            stopGroup.push(cell[5][4]);
-            break;
-    }
-    return stopGroup;
+    clearTimeout(move);
+    snakeMove();
+};
+/***************************************** 蛇的原型 **********************************/
+function Snake(){
+    this.snakeBody = [];
+    this.snakeUrl = "url(img/small-snake-11.png)";
+    this.speed = 100;
+    this.rotate = 0;
+    this.x = 4;
+    this.y = 0;
+    this.go = 0;
 }
-function changeDir(dir) {                                                //蛇图片转方向
-    var num = 0;
-    switch (dir) { 
-        case "right":
-            snakeBody[num].style.MozTransform = "rotate(0deg)";
-            break;
-        case "left":
-            snakeBody[num].style.MozTransform = "rotate(180deg)";
-            num++;
-            break;
-        case "up":
-            snakeBody[num].style.MozTransform = "rotate(-90deg)";
-            num++;
-            break;
-        case "down":
-            snakeBody[num].style.MozTransform = "rotate(90deg)";
-            num++;
-            break;
-    }
-}
-/**********************************撞自己死、撞阻碍物死 */
-function bitItself() {
-    for (var i = 1; i < snakeBody.length - 1; i++) {
-        if (snakeBody[0] == snakeBody[i]) {
-            return true;
+Snake.prototype = {
+    constructor : Snake,
+    chooseSnake: function () {            //匹配小蛇链接及速度
+        var firstNum = location.search.slice(-7, -6),
+            secondNum = location.search.slice(-5, -4);
+        this.snakeUrl = "url(img/small-snake-" + firstNum + secondNum + ".png)";
+        switch (firstNum) {       
+            case "1":
+                difSpeed.data = "速度：" + secondNum + "5 m/s";
+                this.speed = (300 + (4 - secondNum) * 50);
+                break;
+            case "2":
+                difSpeed.data = "速度：" + (+secondNum + 4) + "0 m/s";
+                this.speed = (100 + (4 - secondNum) * 50);
+                break;
+            case "3":
+                difSpeed.data = "速度：" + (+secondNum + 7) + "5 m/s";
+                this.speed = (50 + (3 - secondNum) * 30);
+                break;
+        }
+    },
+    makeSnakeBody : function() {         //蛇身体各部位图片
+        var body = this.snakeBody,
+            len = body.length;
+        for(var i = 2; i<len-2; i++){
+            body[i].style.background = this.snakeUrl + " no-repeat top left 33%";
+            body[i].style.backgroundSize = "80px";
+        }
+        body[0].style.background = this.snakeUrl + " no-repeat top left 99%";
+        body[0].style.backgroundSize = "80px";
+        body[1].style.background = this.snakeUrl + " no-repeat top left 66%";
+        body[1].style.backgroundSize = "80px";
+        body[len - 2].style.background = this.snakeUrl + " no-repeat top left";
+        body[len - 2].style.backgroundSize = "80px";
+        body[len - 1].style.background = "transparent";
+    },
+    snakeGo : function(dir, preDir){               //蛇的移动
+        if (preDir == "right" && dir == "left" || preDir == "left" && dir == "right" 
+            || preDir == "up" && dir == "down" || preDir == "down" && dir == "up"){
+                dir = preDir;
+        }
+        switch (dir) {
+            case "right":
+                this.x += 1;
+                this.rotate = 0;
+                break;
+            case "left":
+                this.x -= 1;
+                this.rotate = 180;
+                break;
+            case "up":
+                this.y -= 1;
+                this.rotate = -90;
+                break;
+            case "down":
+                this.y += 1;
+                this.rotate = 90;
+                break;
+        }if(this.x >= 0 && this.x <= 31 && this.y >= 0 && this.y <= 21){
+            this.snakeBody.unshift(cell[this.y][this.x]);
+            this.snakeBody.pop();
+        }
+
+    },
+    snakeRotate: function (num, rotate) {         //蛇图片旋转方向
+        var body = this.snakeBody;
+        body[num].style.MozTransform = "rotate(" + rotate + "deg)";
+        body[num].style.MsTransform = "rotate(" + rotate + "deg)";
+        body[num].style.OTransform = "rotate(" + rotate + "deg)";
+        body[num].style.WibkitTransform = "rotate(" + rotate + "deg)";
+        body[num].style.transform = "rotate(" + rotate + "deg)";
+    },
+    eatFood : function(){
+        if (this.snakeBody[0] == foodPosition) {
+            this.snakeBody.push(foodPosition);
+            growUp.data = food;
+            changePlace(food);
+            makeFood();
+            if (this.speed > 70){
+                this.speed -= 1;
+            }
+        }
+    },
+    die : function(){
+        var body = this.snakeBody;
+        var biteOrHit = function () {
+            var maxNum = Math.max(body.length - 2, stopGroup.length);
+            for (var i = 0; i < maxNum; i++) {
+                if (body[0] == body[i + 1] || body[0] == stopGroup[i]) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        if (this.x < 0 || this.x > 31 || this.y < 0 || this.y > 21 || biteOrHit()) {
+            gameOver.style.display = "block";
+            reLoadBtn.focus();
+            this.go = 1;
         }
     }
-    return false;
-}
-function hitTouchStop() {
-    for (var i = 0; i < stopGroup.length; i++) {
-        if (snakeBody[0] == stopGroup[i]) {
-            return true;
-        }
+};
+
+/************************************新蛇 *************************/
+var snake = new Snake();
+snake.snakeBody = [cell[0][4], cell[0][3], cell[0][2], cell[0][1], cell[0][0]];
+snake.chooseSnake();
+snake.makeSnakeBody();
+
+var stopGroup = [], //阻碍蛇前进的树、石头等
+    food = 0;
+makeFood();
+
+function snakeMove(){  //蛇前进时的各种动作
+    snake.snakeGo(direction, preDirection);
+    snake.snakeRotate(0, snake.rotate);
+    snake.snakeRotate(snake.snakeBody.length - 1, 0);
+    snake.makeSnakeBody();
+    snake.die();
+    snake.eatFood();
+    if(snake.go == 0){
+        move = setTimeout(snakeMove, snake.speed);
+    }else{
+        snakeMove = null;
+        window.onkeydown = null;
+        Snake = null;
     }
-    return false;
+    if(snake.snakeBody.length>600){ //蛇身长度超过600结束游戏
+        alert("YOU WIN");
+        window.onkeydown = null;
+    }
+}
+document.body.onkeypress = function(){ //首次触发蛇的前进
+    setTimeout(snakeMove, snake.speed);
+    document.body.onkeypress = null;
+};
+
+
+/**************************场景变化：包括晋级时名字的改变、阻碍物的生成 ********************/
+function changePlace(num) {
+    var result = num / 6,
+        snakeName = ["妖兵一级", "妖兵二级", "妖兵三级", "妖将一级", "妖将二级", "妖将三级", "妖王一级", "妖王二级", "妖王三级", "一方霸主"];
+    if(result<10){
+        snakeGrade.data = snakeName[Math.floor(result)];    //修改蛇晋级的名字
+        if (result % 1 == 0) {
+            for (var i = 0; i < Math.random() * 2; i++) {
+                showTrees(Math.round(Math.random() * 4 + 1));
+            }
+        }
+        switch (result) {
+            case 3:
+                tree2.style.display = "block";
+                stopGroup.push(cell[12][8]);
+                break;
+            case 9:
+                tree2.style.display = "block";
+                stopGroup.push(cell[5][4]);
+                break;
+            default:
+                return;
+        }
+    }else{
+        snakeGrade.data = "一方霸主";
+    }
 }
 
-/******出现不同阻碍物 */
-function showStop(){
-    switch(arguments[0]){
-        case 1:                                                             //出现小草1
-            var num1 = Math.floor(Math.random() * 21),
-                num2 = Math.floor(Math.random() * 31);
-            cell[num1][num2].style.background = "url(img/background-icon.png) top left no-repeat";
-            cell[num1][num2].style.backgroundSize = "240px";
-            stopGroup.push(cell[num1][num2]);
-            break;
-        case 2:
-            var num1 = Math.floor(Math.random() * 21),                      //出现小草2
-                num2 = Math.floor(Math.random() * 31);
+
+/********************随机出现不同阻碍物 ****************/
+function plantTrees(position1, position2, position3, position4, arg3, arg4, arg34){
+    var num1 = Math.floor(Math.random() * 19 + 1),
+        num2 = Math.floor(Math.random() * 29 + 1),
+        num3 = num1 - 1,
+        num4 = num2 - 1,
+        body = snake.snakeBody;
+    for(var i=0; i<body.length-1; i++){  //阻碍物不与蛇身重叠
+        if(cell[1][2] == body[i] || cell[1][4] == body[i] || cell[3][2] == body[i] || cell[3][4] == body[i]){
+            num1 = Math.floor(Math.random() * 19 + 1);
+            num2 = Math.floor(Math.random() * 29 + 1);
             num3 = num1 - 1;
-            num4 = num1 - 2;
-            cell[num1][num2].style.background = "url(img/background-icon.png) top 30% left no-repeat";
-            cell[num1][num2].style.backgroundSize = "240px";
-            cell[num3][num2].style.background = "url(img/background-icon.png) top 20% left no-repeat";
-            cell[num3][num2].style.backgroundSize = "240px";
-            cell[num4][num2].style.background = "url(img/background-icon.png) top 10% left no-repeat";
-            cell[num4][num2].style.backgroundSize = "240px";
-            stopGroup.push(cell[num1][num2]);
+            num4 = num2 - 1;
+        }
+    }
+
+    cell[num1][num2].style.background = "url(img/background-icon.png) " + position1 +" no-repeat";
+    cell[num1][num2].style.backgroundSize = "240px";
+    stopGroup.push(cell[num1][num2]);
+
+    if(arg3 == 1){
+        cell[num3][num2].style.background = "url(img/background-icon.png) " + position3 + " no-repeat";
+        cell[num3][num2].style.backgroundSize = "240px";
+        stopGroup.push(cell[num3][num2]);
+    }
+    if(arg4 == 1){
+        cell[num1][num4].style.background = "url(img/background-icon.png) " + position2 + " no-repeat";
+        cell[num1][num4].style.backgroundSize = "240px";
+        stopGroup.push(cell[num1][num4]);
+    }
+    if(arg34 == 1){
+        cell[num3][num4].style.background = "url(img/background-icon.png) " + position4 + " no-repeat";
+        cell[num3][num4].style.backgroundSize = "240px";
+        stopGroup.push(cell[num3][num4]);
+    }
+}
+
+function showTrees() {
+    switch (arguments[0]) {
+        case 1:                                                             //出现小草1
+            plantTrees("top left");
+            break;
+        case 2:                                                             //出现小草2
+            plantTrees("top 30% left");
             break;
         case 3:                                                             //出现木桩1
-            var num1 = Math.floor(Math.random() * 21),
-                num2 = Math.floor(Math.random() * 31);
-            num3 = num2 + 1;
-            cell[num1][num2].style.background = "url(img/background-icon.png) top 1% left 60% no-repeat";
-            cell[num1][num2].style.backgroundSize = "240px";
-            cell[num1][num3].style.background = "url(img/background-icon.png) top 1% left 70% no-repeat";
-            cell[num1][num3].style.backgroundSize = "240px";
-            stopGroup.push(cell[num1][num2]);
-            stopGroup.push(cell[num1][num3]);
+            plantTrees("top 1% left 70%", "top 1% left 60%", "",  "", 0, 1, 0);
             break;
         case 4:                                                               //出现石头1
-            var num1 = Math.floor(Math.random() * 21),
-                num2 = Math.floor(Math.random() * 31);
-            num3 = num2 + 1;
-            num4 = num1 - 1;
-            cell[num1][num2].style.background = "url(img/background-icon.png) top 32% right 9% no-repeat";
-            cell[num1][num2].style.backgroundSize = "240px";
-            cell[num1][num3].style.background = "url(img/background-icon.png) top 32% right no-repeat";
-            cell[num1][num3].style.backgroundSize = "240px";
-            cell[num4][num2].style.background = "url(img/background-icon.png) top 22% right 9% no-repeat";
-            cell[num4][num2].style.backgroundSize = "240px";
-            cell[num4][num3].style.background = "url(img/background-icon.png) top 22% right no-repeat";
-            cell[num4][num3].style.backgroundSize = "240px";
-            stopGroup.push(cell[num1][num2]);
-            stopGroup.push(cell[num1][num3]);
-            stopGroup.push(cell[num4][num2]);
-            stopGroup.push(cell[num4][num3]);
+            plantTrees("top 32% right", "top 32% right 9%", "top 22% right", "top 22% right 9%", 1, 1, 1);
             break;
         case 5:                                                                //出现木桩2
-            var num1 = Math.floor(Math.random() * 21),
-                num2 = Math.floor(Math.random() * 31);
-            num3 = num2 + 1;
-            num4 = num1 - 1;
-            cell[num1][num2].style.background = "url(img/background-icon.png) top 12% right 9% no-repeat";
-            cell[num1][num2].style.backgroundSize = "240px";
-            cell[num1][num3].style.background = "url(img/background-icon.png) top 12% right no-repeat";
-            cell[num1][num3].style.backgroundSize = "240px";
-            cell[num4][num3].style.background = "url(img/background-icon.png) top 0 right no-repeat";
-            cell[num4][num3].style.backgroundSize = "240px";
-            stopGroup.push(cell[num1][num3]);
+            plantTrees("top 12% right", "top 12% right 9%", "top right", "", 1, 1, 0);
             break;
     }
 }
 
-function makeFood() {                                                                //造食物
+function makeFood() {       //造食物：食物不与蛇身及阻碍物重叠
     foodPosition = cell[Math.floor(Math.random() * 21)][Math.floor(Math.random() * 31)];
-    for (var i = 0; i < snakeBody.length; i++) {
-        if (foodPosition == snakeBody[i]) {
+    for (var i = 0; i < snake.snakeBody.length; i++) {
+        if (foodPosition == snake.snakeBody[i]) {
             arguments.callee();
         } else {
             for (var j = 0; j < stopGroup.length; j++) {
                 if (foodPosition == stopGroup[j]) {
                     arguments.callee();
-                } 
+                }
             }
         }
     }
