@@ -66,6 +66,7 @@ gameInterface.addEventListener("touchstart", function () {
     startY = event.changedTouches[0].pageY;
 }, false)
 gameInterface.addEventListener("touchmove", function () {
+    preDirection = direction;
     event.preventDefault();
     endX = event.changedTouches[0].pageX;
     endY = event.changedTouches[0].pageY;
